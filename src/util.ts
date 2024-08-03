@@ -1,3 +1,5 @@
+import { Double, Int32 } from 'bson';
+
 export type StateSet<T> = React.Dispatch<React.SetStateAction<T>>;
 
 export interface Achievement {
@@ -6,7 +8,7 @@ export interface Achievement {
 
 export interface Condition {
     Completed: boolean;
-    Value?: number;
+    Value?: Int32 | Double;
 }
 
 export type AchievementsType = Record<string, Achievement>;

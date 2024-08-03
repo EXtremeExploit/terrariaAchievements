@@ -14,7 +14,7 @@ module.exports = {
         '@stylistic/ts',
         '@typescript-eslint'
     ],
-    ignorePatterns: ['/build/*'],
+    ignorePatterns: ['/build/*', '/dist/*'],
     rules: {
         '@stylistic/array-bracket-newline': ['error', 'consistent'],
         '@stylistic/array-bracket-spacing': ['error', 'never'],

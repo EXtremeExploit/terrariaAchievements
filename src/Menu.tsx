@@ -4,7 +4,7 @@ import { AchievementsType, StateSet } from './util';
 import { Buffer } from 'buffer';
 
 
-import { BSON, EJSON } from 'bson';
+import { BSON } from 'bson';
 
 import aes from 'aes-js';
 
@@ -51,11 +51,64 @@ export function Menu(props: {
         const bsonData = cbc.decrypt(encryptedAchData);
 
         const doc = BSON.deserialize(bsonData, {
-            allowObjectSmallerThanBufferSize: true
+            allowObjectSmallerThanBufferSize: true,
+            promoteValues: false
         });
-        const jason = EJSON.deserialize(doc);
+        return doc;
+    }
 
-        return jason;
+    function saveAchievements(_ev: React.MouseEvent<HTMLButtonElement>) {
+        const bson = BSON.serialize(props.achievements);
+
+        const remainingBytes = 16 - (bson.length % 16);
+
+        const bsonWithPadding = new Uint8Array(bson.length + remainingBytes);
+        bsonWithPadding.set(bson);
+
+
+        if (remainingBytes) {
+            const padding = new Array(remainingBytes);
+            for (let i = 0; i < remainingBytes; i++) {
+                padding[i] = 0x0F;
+            }
+            bsonWithPadding.set(padding, bson.length);
+        }
+
+
+        let key: Uint8Array;
+        switch (mode) {
+            case 'steam':
+                key = getEncryptionKey(steamId.current);
+                break;
+            case 'offline':
+                key = DEFAULT_KEY;
+                break;
+        }
+
+
+        const cbc = new aes.ModeOfOperation.cbc(key, key);
+        const encryptedData = cbc.encrypt(bsonWithPadding);
+
+        const blob = new Blob([encryptedData], {
+            type: 'application/octet-stream'
+        });
+
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        link.href = url;
+        const name = mode == 'steam' ? 'achievements-steam' : 'achievements';
+
+        link.setAttribute(
+            'download',
+            `${name}.dat`,
+        );
+
+        document.body.appendChild(link);
+
+        link.click();
+
+        link.parentNode?.removeChild(link);
     }
 
     return <>
@@ -107,49 +160,6 @@ export function Menu(props: {
         }}>Load</button>
 
         <button title={`Save using the specified key above (Steam's account id or tModLoader/Offline key)\nMAKE A BACKUP BEFORE REPLACING\nMainly useful for transfering from vanilla to tModLoader and viceversa`}
-            onClick={(_ev) => {
-                const jason = EJSON.serialize(props.achievements);
-                const bson = BSON.serialize(jason);
-
-                const remainingBytes = 16 - (bson.length % 16);
-
-                const bsonWithPadding = new Uint8Array(bson.length + remainingBytes + 16);
-                bsonWithPadding.set(bson);
-
-                let key: Uint8Array;
-                switch (mode) {
-                    case 'steam':
-                        key = getEncryptionKey(steamId.current);
-                        break;
-                    case 'offline':
-                        key = DEFAULT_KEY;
-                        break;
-                }
-
-
-                const cbc = new aes.ModeOfOperation.cbc(key, key);
-                const encryptedData = cbc.encrypt(bsonWithPadding);
-
-                const blob = new Blob([encryptedData], {
-                    type: 'application/octet-stream'
-                });
-
-                const url = URL.createObjectURL(blob);
-
-                const link = document.createElement('a');
-                link.href = url;
-                const name = mode == 'steam' ? 'achievements-steam' : 'achievements';
-
-                link.setAttribute(
-                    'download',
-                    `${name}.dat`,
-                );
-
-                document.body.appendChild(link);
-
-                link.click();
-
-                link.parentNode?.removeChild(link);
-            }}>Save</button>
+            onClick={saveAchievements}>Save</button>
     </>;
 }
