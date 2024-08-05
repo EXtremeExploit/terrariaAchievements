@@ -1,0 +1,22 @@
+.achievements {
+    text-align: left;
+
+}
+
+.achievement {
+    background-color: #353535;
+}
+
+.conditions {
+    padding-left: 2rem;
+}
+
+.condition {
+    padding-left: 2rem;
+}
+
+.progresses {}
+
+.progress {
+    padding-left: 2rem;
+}
