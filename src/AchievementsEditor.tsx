@@ -9,9 +9,9 @@ export function AchievementsEditor(props: {
     return (
         <div className='achievements'>
             {
-                Object.entries(props.achievements).map((achievement) => <div  key={`${achievement[0]}-div`} className="achievement">
+                Object.entries(props.achievements).map((achievement) => <div key={`${achievement[0]}-div`} className="achievement">
                     <h2 key={`${achievement[0]}-h2`}>{achievement[0]}</h2>
-                    <div  key={`${achievement[0]}-conditions`} className='conditions'>
+                    <div key={`${achievement[0]}-conditions`} className='conditions'>
 
                         <h3 key={achievement[0] + '-conds-text'}>Conditions:</h3>
                         {Object.entries(achievement[1].Conditions).map((condition) => (
