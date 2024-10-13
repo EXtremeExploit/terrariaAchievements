@@ -23,12 +23,17 @@ function getEncryptionKey(steamID: bigint) {
     return array;
 }
 
+function steamId2AccountId(steamId: bigint): number {
+    if (steamId < 2 ** 31) return 0; // i dont know any othe sanity check for this
+    return Number(BigInt.asUintN(32, steamId));
+}
 
 export function Menu(props: {
     achievements: AchievementsType,
     setAchievements: StateSet<AchievementsType>
 }) {
     const steamId = useRef<bigint>(0n);
+    const [steamAccountId, setSteamAccountId] = useState<number>(0);
     const file = useRef<File | null>(null);
     const [mode, setMode] = useState<'offline' | 'steam'>('offline');
 
@@ -114,7 +119,7 @@ export function Menu(props: {
     return <>
         <div>
             <h3>Locations:</h3>
-            <h4>Linux/Vanilla: ~./.steam/root/userdata/(AccountId)/105600/remote/achievements-steam.dat</h4>
+            <h4>Linux/Vanilla: ~/.steam/root/userdata/{steamAccountId == 0 ? '(AccountId)' : steamAccountId}/105600/remote/achievements-steam.dat</h4>
             <h4>Linux/tModLoader: ~/.local/share/Terraria/tModLoader/achievements.dat</h4>
             <h4>Windows: i dont know</h4>
         </div>
@@ -136,7 +141,10 @@ export function Menu(props: {
 
         <div>
             <p title={`SteamID is required for importing from steam's userdata/remote\nIt will attempt both offline key and steamid just in case its offline`}> <u>SteamID (Optional):</u></p>
-            <input type='number' placeholder='76561197960287930' onChange={(ev) => steamId.current = BigInt(ev.target.value)}></input>
+            <input type='number' placeholder='76561197960287930' onChange={(ev) => {
+                steamId.current = BigInt(ev.target.value);
+                setSteamAccountId(steamId2AccountId(steamId.current));
+            }}></input>
         </div >
 
 
