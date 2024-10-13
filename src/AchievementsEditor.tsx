@@ -1,4 +1,4 @@
-import { AchievementsType, StateSet } from './util';
+import { AchievementsType, getAchievementImgStyle, isAchievementCompleted, StateSet } from './util';
 
 import './AchievementsEditor.css';
 
@@ -11,8 +11,8 @@ export function AchievementsEditor(props: {
             {
                 Object.entries(props.achievements).map((achievement) => <div key={`${achievement[0]}-div`} className="achievement">
                     <h2 key={`${achievement[0]}-h2`}>{achievement[0]}</h2>
+                    <img key={`${achievement[0]}-icon`} id={`${achievement[0]}-icon`} style={getAchievementImgStyle(achievement[0], isAchievementCompleted(achievement[1]))}></img>
                     <div key={`${achievement[0]}-conditions`} className='conditions'>
-
                         <h3 key={achievement[0] + '-conds-text'}>Conditions:</h3>
                         {Object.entries(achievement[1].Conditions).map((condition) => (
                             <div key={`${achievement[0]}+${condition[0]}`} className='condition'>
