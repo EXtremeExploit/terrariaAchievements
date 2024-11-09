@@ -15,10 +15,6 @@ export interface Condition {
 
 export type AchievementsType = Record<string, Achievement>;
 
-export type AchievementName = keyof AchievementsType;
-export type AchievementConditionName<T extends AchievementName> = keyof ((AchievementsType)[T]['Conditions']);
-export type AchievementConditionProgressName<T extends AchievementName, C extends AchievementConditionName<T>> = keyof (AchievementsType)[T]['Conditions'][C];
-
 export function getAchievementImgStyle(name: string, completed = true): CSSProperties {
     const index = VanillaIconIndexes.findIndex(((e) => e == name));
     if (index >= 0) {
