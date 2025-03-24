@@ -106,7 +106,7 @@ export function Menu(props: {
 
         link.setAttribute(
             'download',
-            `${name}.dat`,
+            `${name}.dat`
         );
 
         document.body.appendChild(link);
@@ -154,13 +154,13 @@ export function Menu(props: {
                 console.log('Trying default key');
                 ach = await loadAchievements(DEFAULT_KEY);
                 setMode('offline');
-            } catch (error) {
+            } catch (_error) {
                 try {
                     console.log('Trying steam key');
                     const key = getEncryptionKey(steamId.current);
                     ach = await loadAchievements(key);
                     setMode('steam');
-                } catch (error2) {
+                } catch (_error2) {
                     alert('Failure to decrypt file, Steam ID is wrong?');
                 }
             }
